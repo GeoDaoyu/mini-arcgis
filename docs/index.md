@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: 开始学习
-      link: /1-项目搭建/
+      link: /1-getting-started/
     - theme: alt
       text: 在 GitHub 上查看
       link: https://github.com/geodaoyu/mini-viewer

@@ -8,16 +8,16 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: "首页", link: "/" },
-      { text: "开始学习", link: "/1-项目搭建/" },
+      { text: "开始学习", link: "/1-getting-started/" },
     ],
 
     sidebar: [
-      { text: "1. 项目搭建", link: "/1-项目搭建/" },
-      { text: "2. MVVM 架构设计", link: "/2-mvvm架构设计/" },
-      { text: "3. 地图投影", link: "/3-地图投影/" },
-      { text: "4. 要素与图层", link: "/4-要素与图层/" },
-      { text: "5. Canvas 绘制", link: "/5-canvas绘制/" },
-      { text: "6. 常见二维图层", link: "/6-常见二维图层/" },
+      { text: "1. 项目搭建", link: "/1-getting-started/" },
+      { text: "2. MVVM 架构设计", link: "/2-mvvm-architecture/" },
+      { text: "3. 地图投影", link: "/3-map-projection/" },
+      { text: "4. 要素与图层", link: "/4-features-and-layers/" },
+      { text: "5. Canvas 绘制", link: "/5-canvas-rendering/" },
+      { text: "6. 常见二维图层", link: "/6-common-layer-types/" },
     ],
 
     socialLinks: [
