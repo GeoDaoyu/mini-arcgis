@@ -26,8 +26,6 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "概述", link: "/2-mvvm架构设计/" },
-          { text: "Map-View 模式", link: "/2-mvvm架构设计/map-view模式" },
-          { text: "数据绑定机制", link: "/2-mvvm架构设计/数据绑定机制" },
         ],
       },
       {
