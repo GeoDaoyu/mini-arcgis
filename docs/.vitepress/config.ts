@@ -12,50 +12,12 @@ export default defineConfig({
     ],
 
     sidebar: [
-      {
-        text: "1. 项目搭建",
-        collapsed: false,
-        items: [
-          { text: "概述", link: "/1-项目搭建/" },
-          { text: "前置知识", link: "/1-项目搭建/前置知识" },
-          { text: "技术栈", link: "/1-项目搭建/技术栈" },
-        ],
-      },
-      {
-        text: "2. MVVM 架构设计",
-        collapsed: true,
-        items: [
-          { text: "概述", link: "/2-mvvm架构设计/" },
-        ],
-      },
-      {
-        text: "3. 地图投影",
-        collapsed: true,
-        items: [
-          { text: "概述", link: "/3-地图投影/" },
-        ],
-      },
-      {
-        text: "4. 要素与图层",
-        collapsed: true,
-        items: [
-          { text: "概述", link: "/4-要素与图层/" },
-        ],
-      },
-      {
-        text: "5. Canvas 绘制",
-        collapsed: true,
-        items: [
-          { text: "概述", link: "/5-canvas绘制/" },
-        ],
-      },
-      {
-        text: "6. 常见二维图层",
-        collapsed: true,
-        items: [
-          { text: "概述", link: "/6-常见二维图层/" },
-        ],
-      },
+      { text: "1. 项目搭建", link: "/1-项目搭建/" },
+      { text: "2. MVVM 架构设计", link: "/2-mvvm架构设计/" },
+      { text: "3. 地图投影", link: "/3-地图投影/" },
+      { text: "4. 要素与图层", link: "/4-要素与图层/" },
+      { text: "5. Canvas 绘制", link: "/5-canvas绘制/" },
+      { text: "6. 常见二维图层", link: "/6-常见二维图层/" },
     ],
 
     socialLinks: [
