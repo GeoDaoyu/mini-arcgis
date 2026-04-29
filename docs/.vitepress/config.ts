@@ -42,9 +42,6 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "概述", link: "/4-要素与图层/" },
-          { text: "几何要素", link: "/4-要素与图层/几何要素" },
-          { text: "图层系统设计", link: "/4-要素与图层/图层系统设计" },
-          { text: "图层视图模式", link: "/4-要素与图层/图层视图模式" },
         ],
       },
       {
