@@ -49,9 +49,6 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "概述", link: "/5-canvas绘制/" },
-          { text: "Canvas 基础", link: "/5-canvas绘制/canvas基础" },
-          { text: "地图渲染流程", link: "/5-canvas绘制/地图渲染流程" },
-          { text: "性能优化", link: "/5-canvas绘制/性能优化" },
         ],
       },
       {
