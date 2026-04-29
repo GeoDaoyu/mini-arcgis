@@ -56,10 +56,6 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "概述", link: "/6-常见二维图层/" },
-          { text: "切片图层", link: "/6-常见二维图层/切片图层" },
-          { text: "动态地图图层", link: "/6-常见二维图层/动态地图图层" },
-          { text: "GeoJSON 图层", link: "/6-常见二维图层/geojson图层" },
-          { text: "图形图层", link: "/6-常见二维图层/图形图层" },
         ],
       },
     ],
