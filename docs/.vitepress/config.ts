@@ -35,9 +35,6 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "概述", link: "/3-地图投影/" },
-          { text: "坐标系基础", link: "/3-地图投影/坐标系基础" },
-          { text: "Web 墨卡托投影", link: "/3-地图投影/web墨卡托投影" },
-          { text: "坐标转换", link: "/3-地图投影/坐标转换" },
         ],
       },
       {
