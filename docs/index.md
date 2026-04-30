@@ -14,7 +14,7 @@ hero:
       link: /1-getting-started/
     - theme: alt
       text: 在 GitHub 上查看
-      link: https://github.com/geodaoyu/mini-viewer
+      link: https://github.com/geodaoyu/mini-arcgis
 
 features:
   - title: 系统化学习路径

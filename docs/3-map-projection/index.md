@@ -26,7 +26,7 @@ function lngLatToXY(lng: number, lat: number): { x: number; y: number }
 function xyToLngLat(x: number, y: number): { lng: number; lat: number }
 ```
 
-在 mini-viewer 中，这两个函数就是 `MapView.toScreen()` 和 `MapView.toMap()`。
+在 mini-arcgis 中，这两个函数就是 `MapView.toScreen()` 和 `MapView.toMap()`。
 
 ## 选什么投影？Web 墨卡托
 

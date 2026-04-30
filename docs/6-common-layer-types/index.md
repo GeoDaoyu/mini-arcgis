@@ -4,7 +4,7 @@
 
 ## 总览
 
-mini-viewer 里的图层继承关系：
+mini-arcgis 里的图层继承关系：
 
 ```
 Layer（基类）

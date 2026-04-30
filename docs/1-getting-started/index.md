@@ -14,7 +14,7 @@
 
 ## 成果展示
 
-在线地址：https://geodaoyu.github.io/mini-viewer/
+在线地址：https://geodaoyu.github.io/mini-arcgis/
 
 目前的进展：
 
@@ -46,7 +46,7 @@
 以下是我的文件夹结构：
 
 ```
-mini-viewer/
+mini-arcgis/
 ├── lib/                    # 核心库源码
 │   ├── main.ts             # 入口，导出公共 API
 │   ├── layers/             # 图层（Tile、GeoJSON、Feature 等）

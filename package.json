@@ -1,5 +1,5 @@
 {
-  "name": "mini-viewer",
+  "name": "mini-arcgis",
   "private": true,
   "version": "0.0.2",
   "type": "module",
@@ -7,13 +7,13 @@
     "dist",
     "index.d.ts"
   ],
-  "main": "./dist/mini-viewer.umd.cjs",
-  "module": "./dist/mini-viewer.js",
+  "main": "./dist/mini-arcgis.umd.cjs",
+  "module": "./dist/mini-arcgis.js",
   "types": "./index.d.ts",
   "exports": {
     "types": "./index.d.ts",
-    "import": "./dist/mini-viewer.js",
-    "require": "./dist/mini-viewer.umd.cjs"
+    "import": "./dist/mini-arcgis.js",
+    "require": "./dist/mini-arcgis.umd.cjs"
   },
   "scripts": {
     "start": "vite",
