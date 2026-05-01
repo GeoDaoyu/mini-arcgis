@@ -8,7 +8,7 @@ Mini-ArcGIS是一个蝇量级的ArcGIS实现，旨在帮助学习者理解ArcGIS
 
 ## AI 协助
 
-Vibe Coding开发，本仓库由 [Qwen](https://tongyi.aliyun.com/) AI 协助开发。
+Vibe Coding开发，本仓库由 [Qwen](https://tongyi.aliyun.com/) AI 和 DeepSeek V4 协助开发。
 
 ## 支持的图层类型
 
