@@ -1,7 +1,7 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
-  title: "Mini-Viewer",
+  title: "Mini-ArcGIS",
   description: "WebGIS 开发学习指南",
   lang: "zh-CN",
 

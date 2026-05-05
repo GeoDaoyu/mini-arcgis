@@ -1,11 +1,11 @@
 ---
 layout: home
 
-title: Mini-Viewer
+title: Mini-ArcGIS
 titleTemplate: WebGIS 开发学习指南
 
 hero:
-  name: Mini-Viewer
+  name: Mini-ArcGIS
   text: WebGIS 开发学习指南
   tagline: 从零开始构建一个轻量级 GIS 引擎
   actions:
