@@ -11,16 +11,33 @@ import { SimpleFillSymbol } from "@/symbols/SimpleFillSymbol";
 import { Color } from "@/Color";
 
 export type GeometryType = "point" | "multipoint" | "polyline" | "polygon";
-export type SketchState = "ready" | "active" | "drawing";
+export type SketchState = "ready" | "active";
 
-export interface SketchEvent {
-  type: string;
-  vertices?: number[][];
-  geometry?: Geometry;
-  graphic?: Graphic;
+export type CreateEventState = "start" | "active" | "complete" | "cancel";
+
+export interface CreateEvent {
+  type: "create";
+  state: CreateEventState;
+  tool: GeometryType;
+  graphic: Graphic | null;
+  vertices: number[][];
   _defaultPrevented: boolean;
   preventDefault(): void;
 }
+
+export interface UndoEvent {
+  type: "undo";
+  tool: GeometryType;
+  vertices: number[][];
+}
+
+export interface RedoEvent {
+  type: "redo";
+  tool: GeometryType;
+  vertices: number[][];
+}
+
+export type SketchEvent = CreateEvent | UndoEvent | RedoEvent;
 
 export interface SketchViewModelProperties {
   view: MapView;
@@ -59,13 +76,15 @@ export default class SketchViewModel {
   public polygonSymbol: any;
 
   public state: SketchState = "ready";
-  public geometryType: GeometryType | null = null;
+  public activeTool: GeometryType | null = null;
+  public createGraphic: Graphic | null = null;
   public vertices: number[][] = [];
 
-  private _events: Map<string, Array<(event: SketchEvent) => void>> = new Map();
+  private _events: Map<string, Array<(event: any) => void>> = new Map();
   private _overlayCanvas: HTMLCanvasElement | null = null;
   private _overlayCtx: CanvasRenderingContext2D | null = null;
   private _cursorPosition: [number, number] | null = null;
+  private _redoStack: number[][] = [];
 
   private _boundMouseDown: (e: MouseEvent) => void;
   private _boundMouseMove: (e: MouseEvent) => void;
@@ -89,27 +108,81 @@ export default class SketchViewModel {
 
   create(type: GeometryType): void {
     if (this.state !== "ready") {
-      this.reset();
+      this.cancel();
     }
 
-    this.geometryType = type;
+    this.activeTool = type;
     this.state = "active";
     this.vertices = [];
+    this._redoStack = [];
+    this.createGraphic = null;
     this._cursorPosition = null;
 
     this._activate();
+
+    this._emitCreate("start");
   }
 
-  reset(): void {
+  complete(): void {
+    if (this.state !== "active") return;
+    this._complete();
+  }
+
+  cancel(): void {
+    if (this.state !== "active") return;
+
     this._deactivate();
     this.state = "ready";
-    this.geometryType = null;
+    this.activeTool = null;
     this.vertices = [];
+    this._redoStack = [];
+    this.createGraphic = null;
     this._cursorPosition = null;
     this._clearOverlay();
+
+    this._emitCreate("cancel");
   }
 
-  on(eventType: string, callback: (event: SketchEvent) => void): void {
+  /** @deprecated use cancel() instead */
+  reset(): void {
+    this.cancel();
+  }
+
+  undo(): void {
+    if (this.state !== "active" || this.vertices.length === 0) return;
+
+    const removed = this.vertices.pop()!;
+    this._redoStack.push(removed);
+
+    if (this.vertices.length === 0) {
+      this.createGraphic = null;
+    }
+
+    const event: UndoEvent = {
+      type: "undo",
+      tool: this.activeTool!,
+      vertices: [...this.vertices],
+    };
+    this._emitEvent("undo", event);
+    this._renderTemporary();
+  }
+
+  redo(): void {
+    if (this.state !== "active" || this._redoStack.length === 0) return;
+
+    const vertex = this._redoStack.pop()!;
+    this.vertices.push(vertex);
+
+    const event: RedoEvent = {
+      type: "redo",
+      tool: this.activeTool!,
+      vertices: [...this.vertices],
+    };
+    this._emitEvent("redo", event);
+    this._renderTemporary();
+  }
+
+  on(eventType: string, callback: (event: any) => void): void {
     if (!this._events.has(eventType)) {
       this._events.set(eventType, []);
     }
@@ -124,7 +197,6 @@ export default class SketchViewModel {
     canvas.tabIndex = 0;
     canvas.focus();
 
-    // capture phase to intercept before MapView handlers
     canvas.addEventListener("mousedown", this._boundMouseDown, true);
     canvas.addEventListener("mousemove", this._boundMouseMove, true);
     canvas.addEventListener("dblclick", this._boundDoubleClick, true);
@@ -190,7 +262,7 @@ export default class SketchViewModel {
 
     const mapPoint = this.view.toMap(event);
 
-    if (this.geometryType === "point") {
+    if (this.activeTool === "point") {
       this._completePoint(mapPoint);
       return;
     }
@@ -205,9 +277,6 @@ export default class SketchViewModel {
     const mapPoint = this.view.toMap(event);
     this._cursorPosition = mapPoint;
 
-    const allVertices = [...this.vertices, mapPoint];
-    this._emit("cursor-update", { vertices: allVertices });
-
     this._renderTemporary();
   }
 
@@ -215,11 +284,11 @@ export default class SketchViewModel {
     event.preventDefault();
     event.stopPropagation();
 
-    if (this.state !== "drawing") return;
+    if (this.vertices.length === 0) return;
 
     const mapPoint = this.view.toMap(event);
 
-    if (this.geometryType !== "point") {
+    if (this.activeTool !== "point") {
       this._addVertex(mapPoint);
     }
 
@@ -229,7 +298,7 @@ export default class SketchViewModel {
   private _handleKeyDown(event: KeyboardEvent): void {
     if (event.key === "c" || event.key === "C") {
       event.preventDefault();
-      if (this.state === "drawing") {
+      if (this.vertices.length > 0) {
         this._complete();
       }
       return;
@@ -237,44 +306,38 @@ export default class SketchViewModel {
 
     if (event.key === "Escape") {
       event.preventDefault();
-      this.reset();
+      this.cancel();
       return;
     }
 
-    if ((event.ctrlKey && event.key === "z") || event.key === "Backspace") {
+    if (event.ctrlKey && event.key === "z" && !event.shiftKey) {
       event.preventDefault();
-      this._removeLastVertex();
+      this.undo();
+      return;
+    }
+
+    if (
+      (event.ctrlKey && event.key === "y") ||
+      (event.ctrlKey && event.shiftKey && event.key === "z")
+    ) {
+      event.preventDefault();
+      this.redo();
+      return;
+    }
+
+    if (event.key === "Backspace") {
+      event.preventDefault();
+      this.undo();
     }
   }
 
   private _addVertex(mapPoint: [number, number]): void {
-    const event = this._emit("vertex-add", {
-      vertices: [...this.vertices, mapPoint],
-    });
+    const ev = this._emitCreate("active");
 
-    if (event._defaultPrevented) return;
+    if (ev._defaultPrevented) return;
 
     this.vertices.push(mapPoint);
-    this.state = "drawing";
-    this._renderTemporary();
-  }
-
-  private _removeLastVertex(): void {
-    if (this.vertices.length === 0) return;
-
-    const event = this._emit("vertex-remove", {
-      vertices: this.vertices.slice(0, -1),
-    });
-
-    if (event._defaultPrevented) return;
-
-    this.vertices.pop();
-
-    if (this.vertices.length === 0) {
-      this.state = "active";
-    }
-
-    this._emit("undo", { vertices: [...this.vertices] });
+    this._redoStack = [];
     this._renderTemporary();
   }
 
@@ -290,17 +353,21 @@ export default class SketchViewModel {
       this.layer.graphics = [...this.layer.graphics, graphic];
     }
 
+    this.createGraphic = graphic;
+
     this._clearOverlay();
     this._deactivate();
     this.state = "ready";
-    this.geometryType = null;
+    this.activeTool = null;
+    this.vertices = [];
+    this._cursorPosition = null;
 
-    this._emit("draw-complete", { geometry, graphic });
+    this._emitCreate("complete");
   }
 
   private _complete(): void {
     if (this.vertices.length === 0) {
-      this.reset();
+      this.cancel();
       return;
     }
 
@@ -308,26 +375,26 @@ export default class SketchViewModel {
 
     let geometry: Geometry;
 
-    if (this.geometryType === "multipoint") {
+    if (this.activeTool === "multipoint") {
       const [lng, lat] = savedVertices[savedVertices.length - 1];
       geometry = new Point({ longitude: lng, latitude: lat });
-    } else if (this.geometryType === "polyline") {
+    } else if (this.activeTool === "polyline") {
       geometry = new Polyline({
         paths: [savedVertices],
       });
-    } else if (this.geometryType === "polygon") {
+    } else if (this.activeTool === "polygon") {
       geometry = new Polygon({
         rings: [savedVertices],
       });
     } else {
-      this.reset();
+      this.cancel();
       return;
     }
 
     const symbol =
-      this.geometryType === "multipoint"
+      this.activeTool === "multipoint"
         ? this.pointSymbol
-        : this.geometryType === "polyline"
+        : this.activeTool === "polyline"
           ? this.polylineSymbol
           : this.polygonSymbol;
 
@@ -340,36 +407,41 @@ export default class SketchViewModel {
       this.layer.graphics = [...this.layer.graphics, graphic];
     }
 
+    this.createGraphic = graphic;
+
     this._clearOverlay();
     this._deactivate();
     this.state = "ready";
-    this.geometryType = null;
+    this.activeTool = null;
     this.vertices = [];
     this._cursorPosition = null;
 
-    this._emit("draw-complete", {
-      geometry,
-      graphic,
-      vertices: savedVertices,
-    });
+    this._emitCreate("complete");
   }
 
-  private _emit(type: string, data: Partial<SketchEvent> = {}): SketchEvent {
-    const event: SketchEvent = {
-      type,
+  private _emitCreate(state: CreateEventState): CreateEvent {
+    const tool = this.activeTool!;
+    const event: CreateEvent = {
+      type: "create",
+      state,
+      tool,
+      graphic: this.createGraphic,
+      vertices: [...this.vertices],
       _defaultPrevented: false,
-      preventDefault(this: SketchEvent) {
+      preventDefault(this: CreateEvent) {
         this._defaultPrevented = true;
       },
-      ...data,
     };
 
+    this._emitEvent("create", event);
+    return event;
+  }
+
+  private _emitEvent(type: string, event: any): void {
     const callbacks = this._events.get(type) || [];
     for (const callback of callbacks) {
       callback(event);
     }
-
-    return event;
   }
 
   // ---- temporary rendering ----
@@ -387,13 +459,13 @@ export default class SketchViewModel {
       this._drawVertex(ctx, vertex);
     }
 
-    if (this.geometryType === "polyline") {
+    if (this.activeTool === "polyline") {
       this._renderTempPolyline(ctx);
-    } else if (this.geometryType === "polygon") {
+    } else if (this.activeTool === "polygon") {
       this._renderTempPolygon(ctx);
     }
 
-    if (this._cursorPosition && this.state === "drawing") {
+    if (this._cursorPosition && this.vertices.length > 0) {
       this._drawCursor(ctx);
     }
   }

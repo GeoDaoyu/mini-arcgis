@@ -258,3 +258,5 @@ body, html {
 .sketch-icon-reset::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
+
+/* undo/redo use inline SVG icons — no extra CSS needed */

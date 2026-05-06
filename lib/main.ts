@@ -28,4 +28,12 @@ export {
   SketchViewModel,
 };
 
-export type { GeometryType, SketchEvent } from "./widgets/SketchViewModel";
+export type {
+  GeometryType,
+  SketchState,
+  CreateEventState,
+  CreateEvent,
+  UndoEvent,
+  RedoEvent,
+  SketchEvent,
+} from "./widgets/SketchViewModel";

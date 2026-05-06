@@ -63,7 +63,7 @@ function setActiveButton(button: HTMLElement | null): void {
 Object.entries(sketchButtonConfigs).forEach(([, { button, type }]) => {
   button.addEventListener("click", () => {
     if (button.classList.contains("active")) {
-      sketchViewModel.reset();
+      sketchViewModel.cancel();
       setActiveButton(null);
       return;
     }
@@ -72,13 +72,23 @@ Object.entries(sketchButtonConfigs).forEach(([, { button, type }]) => {
   });
 });
 
-sketchViewModel.on("draw-complete", () => {
-  setActiveButton(null);
+sketchViewModel.on("create", (event) => {
+  if (event.state === "complete" || event.state === "cancel") {
+    setActiveButton(null);
+  }
+});
+
+document.getElementById("sketch-undo-btn")!.addEventListener("click", () => {
+  sketchViewModel.undo();
+});
+
+document.getElementById("sketch-redo-btn")!.addEventListener("click", () => {
+  sketchViewModel.redo();
 });
 
 document.getElementById("sketch-reset-btn")!.addEventListener("click", () => {
   sketchLayer.graphics = [];
-  sketchViewModel.reset();
+  sketchViewModel.cancel();
   setActiveButton(null);
 });
 
