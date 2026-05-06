@@ -26,7 +26,6 @@ export default class MapImageLayerView extends LayerView<MapImageLayer> {
       const ctx = this.view.canvas.getContext("2d");
       if (!ctx) return;
 
-      ctx.clearRect(0, 0, width, height);
       ctx.drawImage(imageBitmap, 0, 0, width, height);
     } catch (error) {
       console.error("Error in render method:", error);

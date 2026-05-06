@@ -22,6 +22,8 @@ export default class MapView extends DOMContainer {
   private lastClientX: number = 0;
   private lastClientY: number = 0;
   private interactionStartCenter: number[] = [0, 0];
+  private _rendering: boolean = false;
+  private _pendingRender: boolean = false;
 
   constructor(properties: MapViewProperties) {
     super(properties);
@@ -50,8 +52,27 @@ export default class MapView extends DOMContainer {
     this.layerViews = layers.map((layer) => layer.createLayerView(this));
   }
   async render() {
-    for (const layerView of this.layerViews) {
-      await layerView.render();
+    if (this._rendering) {
+      this._pendingRender = true;
+      return;
+    }
+    this._rendering = true;
+
+    try {
+      const ctx = this.canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      }
+
+      for (const layerView of this.layerViews) {
+        await layerView.render();
+      }
+    } finally {
+      this._rendering = false;
+      if (this._pendingRender) {
+        this._pendingRender = false;
+        this.render();
+      }
     }
   }
 

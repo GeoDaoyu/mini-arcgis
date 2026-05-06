@@ -1,3 +1,4 @@
+import { reactiveUtils } from "@geodaoyu/accessor";
 import LayerView from "./LayerView";
 import GraphicsLayer from "@/layers/GraphicsLayer";
 import { SimpleMarkerSymbol } from "@/symbols/SimpleMarkerSymbol";
@@ -8,6 +9,13 @@ import MapView from "../MapView";
 export default class GraphicsLayerView extends LayerView<GraphicsLayer> {
   constructor(properties: { view: MapView; layer: GraphicsLayer }) {
     super(properties);
+
+    reactiveUtils.watch(
+      () => this.layer.graphics,
+      () => {
+        this.view.render();
+      },
+    );
   }
 
   async render() {

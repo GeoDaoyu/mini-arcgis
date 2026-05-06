@@ -80,7 +80,6 @@ document.getElementById("sketch-reset-btn")!.addEventListener("click", () => {
   sketchLayer.graphics = [];
   sketchViewModel.reset();
   setActiveButton(null);
-  view.render();
 });
 
 // ---- Layer Panel ----
@@ -133,16 +132,6 @@ nextBtn?.addEventListener("click", () => {
   }
 });
 
-function keepSketchOnTop(): void {
-  const sketchIdx = view.map.layers.findIndex(
-    (l) => l.id === "sketch-layer",
-  );
-  if (sketchIdx !== -1 && sketchIdx !== view.map.layers.length - 1) {
-    view.map.remove(sketchLayer);
-    view.map.add(sketchLayer);
-  }
-}
-
 function toggleLayer(layerId: string) {
   const layer = layerExamples[layerId].layer;
   const exists = view.map.findLayerById(layerId);
@@ -157,11 +146,16 @@ function toggleLayer(layerId: string) {
       }
     }
   } else {
-    view.map.add(layer);
+    // insert before sketch layer to keep sketch on top
+    const layers = [...view.map.layers];
+    const sketchIdx = layers.findIndex((l) => l.id === "sketch-layer");
+    const insertIdx = sketchIdx !== -1 ? sketchIdx : layers.length;
+    layers.splice(insertIdx, 0, layer);
+    view.map.layers = layers;
+
     if (!activeLayers.includes(layerId)) {
       activeLayers.push(layerId);
     }
-    keepSketchOnTop();
   }
   updateCodePanel();
 }

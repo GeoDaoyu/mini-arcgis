@@ -288,7 +288,6 @@ export default class SketchViewModel {
 
     if (this.layer) {
       this.layer.graphics = [...this.layer.graphics, graphic];
-      this.view.render();
     }
 
     this._clearOverlay();
@@ -339,7 +338,6 @@ export default class SketchViewModel {
 
     if (this.layer) {
       this.layer.graphics = [...this.layer.graphics, graphic];
-      this.view.render();
     }
 
     this._clearOverlay();
