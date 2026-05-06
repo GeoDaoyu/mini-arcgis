@@ -18,6 +18,7 @@ export default defineConfig({
       { text: "4. 要素与图层", link: "/4-features-and-layers/" },
       { text: "5. Canvas 绘制", link: "/5-canvas-rendering/" },
       { text: "6. 常见二维图层", link: "/6-common-layer-types/" },
+      { text: "7. 标绘", link: "/7-sketch/" },
     ],
 
     socialLinks: [
