@@ -49,7 +49,7 @@ export default class MapView extends DOMContainer {
   private createLayerView(layers: Layer[]) {
     this.layerViews = layers.map((layer) => layer.createLayerView(this));
   }
-  private async render() {
+  async render() {
     for (const layerView of this.layerViews) {
       await layerView.render();
     }

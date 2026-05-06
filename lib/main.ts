@@ -9,6 +9,8 @@ import Point from "./geometry/Point";
 import Polyline from "./geometry/Polyline";
 import Polygon from "./geometry/Polygon";
 import Graphic from "./Graphic";
+import Sketch from "./widgets/Sketch";
+import SketchViewModel from "./widgets/SketchViewModel";
 
 export {
   Map,
@@ -22,4 +24,8 @@ export {
   Polyline,
   Polygon,
   Graphic,
+  Sketch,
+  SketchViewModel,
 };
+
+export type { GeometryType, SketchEvent } from "./widgets/SketchViewModel";

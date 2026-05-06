@@ -122,3 +122,139 @@ body, html {
   white-space: pre-wrap;
   word-break: break-all;
 }
+
+/* ---- Sketch Toolbar ---- */
+
+#sketch-toolbar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sketch-btn {
+  font-size: 16px;
+  background-color: transparent;
+  border: 1px solid #d3d3d3;
+  color: #6e6e6e;
+  height: 32px;
+  width: 32px;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.sketch-btn:hover {
+  background: #e8e8e8;
+  border-color: #aaa;
+  color: #333;
+}
+
+.sketch-btn.active {
+  background: #0079c1;
+  color: #fff;
+  border-color: #0079c1;
+}
+
+.sketch-reset-btn {
+  color: #c33;
+  border-color: #e0c0c0;
+}
+
+.sketch-reset-btn:hover {
+  background: #fce8e8;
+  border-color: #c33;
+  color: #c33;
+}
+
+.sketch-divider {
+  width: 1px;
+  height: 20px;
+  background: #d3d3d3;
+  margin: 0 2px;
+}
+
+/* sketch button icons */
+.sketch-icon {
+  display: block;
+}
+
+.sketch-icon-point {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.sketch-icon-polyline {
+  width: 2px;
+  height: 14px;
+  background: currentColor;
+  border-radius: 1px;
+  position: relative;
+  transform: rotate(-30deg);
+}
+
+.sketch-icon-polyline::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 5px;
+  width: 2px;
+  height: 10px;
+  background: currentColor;
+  border-radius: 1px;
+  transform: rotate(60deg);
+  transform-origin: top left;
+}
+
+.sketch-icon-polygon {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  background: rgba(0, 121, 193, 0.15);
+}
+
+.sketch-btn.active .sketch-icon-polygon {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.sketch-icon-reset {
+  position: relative;
+  width: 14px;
+  height: 14px;
+}
+
+.sketch-icon-reset::before,
+.sketch-icon-reset::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 14px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.sketch-icon-reset::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.sketch-icon-reset::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
