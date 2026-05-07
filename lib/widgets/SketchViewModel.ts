@@ -143,11 +143,6 @@ export default class SketchViewModel {
     this._emitCreate("cancel");
   }
 
-  /** @deprecated use cancel() instead */
-  reset(): void {
-    this.cancel();
-  }
-
   undo(): void {
     if (this.state !== "active" || this.vertices.length === 0) return;
 

@@ -1,8 +1,7 @@
 import MapView from "@/views/MapView";
 import Map from "@/Map";
 import GraphicsLayer from "@/layers/GraphicsLayer";
-import SketchViewModel from "@/widgets/SketchViewModel";
-import type { GeometryType } from "@/widgets/SketchViewModel";
+import initSketch from "./widgets/Sketch";
 import { layerExamples, layerIdToName, layerConfig } from "./examples";
 
 const map = new Map();
@@ -20,77 +19,7 @@ const view = new MapView({
 view.map.add(layerExamples["OpenStreetMapLayer"].layer);
 view.map.add(sketchLayer); // sketch on top
 
-// ---- Sketch ----
-
-const sketchViewModel = new SketchViewModel({
-  view,
-  layer: sketchLayer,
-});
-
-const sketchButtonConfigs: Record<
-  string,
-  { button: HTMLElement; type: GeometryType }
-> = {
-  "sketch-point-btn": {
-    button: document.getElementById("sketch-point-btn")!,
-    type: "point",
-  },
-  "sketch-polyline-btn": {
-    button: document.getElementById("sketch-polyline-btn")!,
-    type: "polyline",
-  },
-  "sketch-polygon-btn": {
-    button: document.getElementById("sketch-polygon-btn")!,
-    type: "polygon",
-  },
-};
-
-const allSketchButtons = Object.values(sketchButtonConfigs).map(
-  (c) => c.button,
-);
-
-function clearActiveButton(): void {
-  allSketchButtons.forEach((btn) => btn.classList.remove("active"));
-}
-
-function setActiveButton(button: HTMLElement | null): void {
-  clearActiveButton();
-  if (button) {
-    button.classList.add("active");
-  }
-}
-
-Object.entries(sketchButtonConfigs).forEach(([, { button, type }]) => {
-  button.addEventListener("click", () => {
-    if (button.classList.contains("active")) {
-      sketchViewModel.cancel();
-      setActiveButton(null);
-      return;
-    }
-    sketchViewModel.create(type);
-    setActiveButton(button);
-  });
-});
-
-sketchViewModel.on("create", (event) => {
-  if (event.state === "complete" || event.state === "cancel") {
-    setActiveButton(null);
-  }
-});
-
-document.getElementById("sketch-undo-btn")!.addEventListener("click", () => {
-  sketchViewModel.undo();
-});
-
-document.getElementById("sketch-redo-btn")!.addEventListener("click", () => {
-  sketchViewModel.redo();
-});
-
-document.getElementById("sketch-reset-btn")!.addEventListener("click", () => {
-  sketchLayer.graphics = [];
-  sketchViewModel.cancel();
-  setActiveButton(null);
-});
+initSketch(view, sketchLayer);
 
 // ---- Layer Panel ----
 

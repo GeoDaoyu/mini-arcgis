@@ -64,11 +64,6 @@ export default class Sketch {
     this.viewModel.redo();
   }
 
-  /** @deprecated use cancel() instead */
-  reset(): void {
-    this.viewModel.reset();
-  }
-
   on(eventType: "create", callback: (event: CreateEvent) => void): void;
   on(eventType: "undo", callback: (event: UndoEvent) => void): void;
   on(eventType: "redo", callback: (event: RedoEvent) => void): void;
