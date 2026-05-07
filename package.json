@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@geodaoyu/accessor": "^3.0.2",
-    "@terraformer/arcgis": "^2.1.2"
+    "@terraformer/arcgis": "^2.1.2",
+    "@turf/turf": "^7.3.5"
   }
 }
