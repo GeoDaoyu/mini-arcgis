@@ -2,6 +2,7 @@ import MapView from "@/views/MapView";
 import Map from "@/Map";
 import GraphicsLayer from "@/layers/GraphicsLayer";
 import initSketch from "./widgets/Sketch";
+import initMeasurement from "./widgets/Measurement";
 import { layerExamples, layerIdToName, layerConfig } from "./examples";
 
 const map = new Map();
@@ -18,8 +19,14 @@ const view = new MapView({
 
 view.map.add(layerExamples["OpenStreetMapLayer"].layer);
 view.map.add(sketchLayer); // sketch on top
+const measurementLayer = new GraphicsLayer({
+  id: "measurement-layer",
+  title: "Measurement",
+});
+view.map.add(measurementLayer); // measurement on top
 
 initSketch(view, sketchLayer);
+initMeasurement(view, measurementLayer);
 
 // ---- Layer Panel ----
 

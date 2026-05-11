@@ -260,3 +260,68 @@ body, html {
 }
 
 /* undo/redo use inline SVG icons — no extra CSS needed */
+
+/* ---- Measurement Toolbar ---- */
+
+#measurement-toolbar {
+  position: absolute;
+  top: 54px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.measurement-btn {
+  font-size: 16px;
+  background-color: transparent;
+  border: 1px solid #d3d3d3;
+  color: #6e6e6e;
+  height: 32px;
+  width: 32px;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.measurement-btn:hover {
+  background: #e8e8e8;
+  border-color: #aaa;
+  color: #333;
+}
+
+.measurement-btn.active {
+  background: #0079c1;
+  color: #fff;
+  border-color: #0079c1;
+}
+
+.measurement-clear-btn {
+  color: #c33;
+  border-color: #e0c0c0;
+}
+
+.measurement-clear-btn:hover {
+  background: #fce8e8;
+  border-color: #c33;
+  color: #c33;
+}
+
+.measurement-divider {
+  width: 1px;
+  height: 20px;
+  background: #d3d3d3;
+  margin: 0 2px;
+}

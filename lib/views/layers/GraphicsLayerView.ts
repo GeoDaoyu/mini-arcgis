@@ -4,6 +4,7 @@ import GraphicsLayer from "@/layers/GraphicsLayer";
 import { SimpleMarkerSymbol } from "@/symbols/SimpleMarkerSymbol";
 import { SimpleLineSymbol } from "@/symbols/SimpleLineSymbol";
 import { SimpleFillSymbol } from "@/symbols/SimpleFillSymbol";
+import { TextSymbol } from "@/symbols/TextSymbol";
 import MapView from "../MapView";
 
 export default class GraphicsLayerView extends LayerView<GraphicsLayer> {
@@ -55,6 +56,17 @@ export default class GraphicsLayerView extends LayerView<GraphicsLayer> {
           this.renderPolygon(ctx, graphic.geometry.rings, symbol);
         },
       ],
+      [
+        "text",
+        (graphic, symbol) => {
+          if (!("longitude" in graphic.geometry)) return;
+          const [screenX, screenY] = this.view.toScreen(
+            graphic.geometry.longitude,
+            graphic.geometry.latitude,
+          );
+          this.renderText(ctx, screenX, screenY, symbol);
+        },
+      ],
     ]);
 
     this.layer.graphics
@@ -65,7 +77,8 @@ export default class GraphicsLayerView extends LayerView<GraphicsLayer> {
       }))
       .filter(({ symbol }) => symbol)
       .forEach(({ graphic, symbol }) => {
-        renderers.get(graphic.geometry.type)?.(graphic, symbol);
+        const key = symbol?.type === "text" ? "text" : graphic.geometry.type;
+        renderers.get(key)?.(graphic, symbol);
       });
   }
 
@@ -100,6 +113,29 @@ export default class GraphicsLayerView extends LayerView<GraphicsLayer> {
         ctx.strokeRect(x - radius, y - radius, size, size);
       }
     }
+  }
+
+  private renderText(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    symbol: TextSymbol,
+  ) {
+    const offsetX = x + (symbol.xoffset ?? 0);
+    const offsetY = y + (symbol.yoffset ?? 0);
+
+    ctx.font = symbol.font.toString();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    if (symbol.haloColor) {
+      ctx.strokeStyle = `rgba(${symbol.haloColor.r}, ${symbol.haloColor.g}, ${symbol.haloColor.b}, ${symbol.haloColor.a})`;
+      ctx.lineWidth = parseInt(symbol.haloSize) || 1;
+      ctx.strokeText(symbol.text, offsetX, offsetY);
+    }
+
+    ctx.fillStyle = `rgba(${symbol.color.r}, ${symbol.color.g}, ${symbol.color.b}, ${symbol.color.a})`;
+    ctx.fillText(symbol.text, offsetX, offsetY);
   }
 
   private renderPolyline(

@@ -37,6 +37,27 @@
         <span class="sketch-icon sketch-icon-reset"></span>
       </button>
     </div>
+    <div id="measurement-toolbar">
+      <button class="measurement-btn" id="measure-distance-btn" title="Measure Distance">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="21" x2="21" y2="3"/>
+          <line x1="3" y1="18" x2="3" y2="21"/>
+          <line x1="6" y1="21" x2="3" y2="21"/>
+          <line x1="18" y1="3" x2="21" y2="3"/>
+          <line x1="21" y1="6" x2="21" y2="3"/>
+        </svg>
+      </button>
+      <button class="measurement-btn" id="measure-area-btn" title="Measure Area">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="4" y="4" width="16" height="16" stroke-dasharray="4 2"/>
+          <text x="12" y="17" text-anchor="middle" font-size="7" fill="currentColor" stroke="none" font-weight="bold">A</text>
+        </svg>
+      </button>
+      <div class="measurement-divider"></div>
+      <button class="measurement-btn measurement-clear-btn" id="measurement-clear-btn" title="Clear all measurements">
+        <span class="sketch-icon sketch-icon-reset"></span>
+      </button>
+    </div>
     <div id="layer-panel">
       <h3>Layers</h3>
       <div class="layer-item">

@@ -19,6 +19,7 @@ export default defineConfig({
       { text: "5. Canvas 绘制", link: "/5-canvas-rendering/" },
       { text: "6. 常见二维图层", link: "/6-common-layer-types/" },
       { text: "7. 标绘", link: "/7-sketch/" },
+      { text: "8. 测量", link: "/8-measurement/" },
     ],
 
     socialLinks: [
