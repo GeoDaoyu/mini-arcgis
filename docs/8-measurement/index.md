@@ -1,8 +1,54 @@
 # 8. 测量
 
-上一章讲了标绘——用户在地图上画点、线、面。但实际项目中，用户不只是"画"，还需要**量**——这条线段有多长？这个面有多大？这就是本章要解决的问题。
+上一章讲了标绘——用户在地图上画点、线、面。画出来之后，自然会想问：**这条线有多长？这个面有多大？** 这就是测量。
 
-测量是在标绘基础上的功能增强：复用标绘的绘制交互（鼠标点击落点、实时预览、双击完成），同时引入 `@turf/turf` 进行距离和面积计算，并通过新引入的 `TextSymbol` 在地图上显示测量结果。
+## 思路：Sketch + turf = 测量
+
+测量本质上就是**标绘 + 空间计算**。标绘负责收集用户画的顶点坐标，空间计算负责把坐标变成距离或面积数值。测量不需要新的绘制逻辑——直接复用 Sketch 的鼠标交互、顶点管理、临时预览即可，只是在完成时多算一步。
+
+```
+标绘的顶点 [lng, lat][]
+  → 格式转换（ArcGIS → GeoJSON）
+  → turf.length() / turf.area()
+  → "1.23 km" / "50000 sq m"
+```
+
+这就是为什么上一章花了那么多篇幅讲标绘——它是所有地图交互的基石。测量、编辑、空间查询，都是在标绘的基础上叠加领域逻辑。
+
+## 测量是最基础的空间分析
+
+空间分析有很多种：缓冲区分析（buffer）、叠加分析（intersect / union）、网络分析（最短路径）、插值分析……但测量是最基础、最常用的一种。它的输入只是坐标，输出只是数值，不需要额外的数据源，非常适合作为"第一个空间分析功能"来实践。
+
+做空间分析，有两种方式：
+
+1. **引入专业库**（如 `@turf/turf`）——turf 提供了几十种空间分析函数，覆盖了缓冲区、叠加、聚类、网格等常见需求。
+2. **自己写公式**——比如距离公式（Haversine）、面积公式（Shoelace），适合学习原理但不能用于生产（地球是椭球，不是平面）。
+
+本项目中测量用的是 turf。在真正的生产项目中，turf 也是一个靠谱的选择——ArcGIS 官方也在用。
+
+## 对我们库的要求：格式转换
+
+turf 接受 GeoJSON 格式，而我们库的几何数据是 ArcGIS 格式（`paths` / `rings`）。所以接入 turf 的唯一障碍就是**格式转换**。
+
+`@terraformer/arcgis` 提供了一个函数搞定这件事：
+
+```ts
+import { arcgisToGeoJSON } from "@terraformer/arcgis";
+import { length, area } from "@turf/turf";
+
+// 线段：paths → LineString → 距离
+const vertices = [[120, 30], [121, 30], [121, 31]];
+const line = arcgisToGeoJSON({ paths: [vertices] });
+const d = length(line, { units: "meters" });  // 线段长度（米）
+
+// 面：rings → Polygon → 面积
+const polygon = arcgisToGeoJSON({ rings: [vertices] });
+const a = area(polygon);  // 面积（平方米）
+```
+
+`arcgisToGeoJSON()` 做了两件事：把 `paths` 映射为 GeoJSON 的 `LineString` 坐标数组，把 `rings` 映射为 `Polygon` 坐标数组。坐标值本身不变——两种格式的坐标都是 `[lng, lat]`，只是结构的键名不同。
+
+一旦数据到了 GeoJSON，整个 turf 生态就通了——`buffer()`、`intersect()`、`centroid()`、`bbox()`……格式转换是打通两个世界的钥匙。
 
 ## 设计：Class 和 ViewModel 分层
 
@@ -15,8 +61,8 @@ DistanceMeasurement2D（UI 层）
         ├── layer: GraphicsLayer
         ├── state: "ready" | "active"
         ├── vertices: number[][]
-        ├── measureGraphic: Graphic | null       ← 绘制的图形
-        └── labelGraphic: Graphic | null         ← 测量结果文本
+        ├── measureGraphic: Graphic | null       ← 绘制的几何图形
+        └── labelGraphic: Graphic | null         ← 测量结果文本标注
 
 AreaMeasurement2D（UI 层）
   └── viewModel: AreaMeasurement2DViewModel（逻辑层）
@@ -24,56 +70,7 @@ AreaMeasurement2D（UI 层）
         └── 锁定 polygon 类型
 ```
 
-**DistanceMeasurement2D** 锁定 polyline（线段），使用 turf 的 `length()` 计算距离。**AreaMeasurement2D** 锁定 polygon（面），使用 turf 的 `area()` 计算面积。
-
-## 测量计算流程
-
-整个测量链条涉及三个库的配合：
-
-```
-用户点击地图
-  → 收集顶点 [lng, lat][]
-  → arcgisToGeoJSON({ paths: [vertices] })
-  → GeoJSON LineString / Polygon
-  → turf.length() / turf.area()
-  → 数值（米 / 平方米）
-  → 格式化 → "1.23 km" / "456 sq m"
-  → TextSymbol → 渲染到地图
-```
-
-关键转换函数是 `@terraformer/arcgis` 的 `arcgisToGeoJSON()`——它把 ArcGIS 格式的坐标（`paths` / `rings`）转成 turf 需要的 GeoJSON 格式。
-
-## TextSymbol 和 Font
-
-为了在地图上显示测量结果，本章引入了两个新的符号类：
-
-**Font** — 字体描述：
-
-```ts
-new Font(
-  size: number = 12,           // 字号
-  family: string = "sans-serif", // 字体族
-  weight: string = "normal",     // 粗细
-  style: string = "normal",      // 斜体
-  decoration: string = "none"    // 装饰线
-)
-```
-
-**TextSymbol** — 文本符号，继承自 `Symbol`（type = `"text"`）：
-
-```ts
-new TextSymbol({
-  text: "1.23 km",                           // 要显示的文本
-  color: new Color([255, 255, 255, 1]),      // 文本颜色
-  haloColor: new Color([0, 0, 0, 0.7]),      // 描边颜色（光晕）
-  haloSize: "2px",                           // 描边宽度
-  xoffset: 0,                                // 水平偏移（像素）
-  yoffset: 0,                                // 垂直偏移（像素）
-  font: new Font(14, "sans-serif", "bold"),   // 字体
-})
-```
-
-`haloColor` 和 `haloSize` 提供文字描边效果——先画描边（`strokeText`），再画填充（`fillText`），这样文字在任何底图背景上都清晰可见。`GraphicsLayerView` 的渲染调度中新增了 `"text"` 分支，当 `symbol.type === "text"` 时调用专门的 `renderText()` 方法。
+测量 ViewModel 内部复用了标绘的整套交互机制（鼠标接管、overlay canvas、键盘快捷键），只在 `_renderTemporary()` 和 `_complete()` 中增加了测量计算和文本标注的步骤。
 
 ## 测量格式化规则
 
@@ -124,16 +121,6 @@ measure.start();
 
 面积测量的用法完全一样，只是把 `DistanceMeasurement2D*` 换成 `AreaMeasurement2D*`。
 
-## 和标绘的关键区别
-
-1. **锁定几何类型**：测量工具不需要选择画什么——DistanceMeasurement2D 永远画线，AreaMeasurement2D 永远画面。API 用 `start()` 而非 `create(type)`。
-
-2. **双重输出**：完成时创建**两个** Graphic——一个是几何图形（Polyline/Polygon + 对应符号），一个是标注点（Point + TextSymbol 显示测量值）。两者一起追加到 `layer.graphics` 中。
-
-3. **实时测量**：绘制过程中，overlay canvas 除了渲染几何预览，还会在图形的中点/重心位置实时显示当前测量数值。移动鼠标或增减顶点时，数值即时更新。
-
-4. **颜色区分**：测量工具使用橙色系（`rgba(227, 139, 79, ...)`）绘制，和标绘的蓝色系（`rgba(0, 120, 212, ...)`）形成视觉区别。
-
 ## 面测量的特殊处理
 
 `turf.area()` 要求面（Polygon）的环是**闭合的**（首尾顶点坐标相同）。在绘制过程中，顶点数组不包含闭合点，所以测量前需要自动补上第一个顶点作为闭合点。代码逻辑也会检查是否已经闭合，避免重复追加。
@@ -150,22 +137,6 @@ measure.start();
 | `Ctrl + Z` | 撤销 |
 | `Ctrl + Y` / `Ctrl + Shift + Z` | 重做 |
 
-## 交互限制
-
-demo 中只允许一个测量工具处于活跃状态——启动 Distance 会自动取消 Area，反之亦然。同时，测量和标绘也互斥：启动测量会保持测量工具活跃，标绘工具的点击会取消测量。
-
-## 和 GraphicsLayer 的配合
-
-和标绘一样，测量结果（几何图形 + 文本标注）在 `complete` 时自动追加到 `layer.graphics`。因为 `graphics` 是响应式属性，变化会触发自动重绘。
-
-清除测量结果：
-
-```ts
-measureLayer.graphics = [];
-distanceVM.cancel();  // 取消进行中的测量
-areaVM.cancel();
-```
-
 ## 一句话总结
 
-测量就是在标绘的绘制交互基础上，接入 turf 做空间计算，通过 TextSymbol 把结果显示在地图上。Class/ViewModel 分层让测量工具既可以独立使用，也可以通过 Widget 门面快速集成。
+测量就是标绘 + 空间计算。标绘负责收集坐标，turf 负责把坐标变成数值，`@terraformer/arcgis` 负责让两种格式对上话。搞定了格式转换，整个 turf 生态就为你所用——测量只是冰山一角。
