@@ -20,7 +20,7 @@
 
 - [x] 图层加载
 - [x] 绘制工具
-- [ ] 空间分析（测量）
+- [x] 空间分析（测量）
 
 持续迭代中。
 
@@ -55,6 +55,7 @@ mini-arcgis/
 │   ├── geometry/
 │   │   └── support/        # 几何类型 & 投影工具
 │   ├── symbols/            # 符号（点、线、面样式）
+│   ├── widgets/            # 微件（标绘、测量等交互工具）
 │   └── renderers/          # 渲染器
 ├── src/                    # 示例 / Demo 代码
 ├── docs/                   # VitePress 文档
