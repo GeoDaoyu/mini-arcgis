@@ -142,13 +142,10 @@ body, html {
 
 .toolbar-label {
   width: 100%;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 0 2px 2px;
-  margin-bottom: -2px;
+  color: #333;
+  margin: 0;
 }
 
 .sketch-btn {
@@ -277,7 +274,7 @@ body, html {
 
 #measurement-toolbar {
   position: absolute;
-  top: 54px;
+  top: 86px;
   left: 10px;
   background: rgba(255, 255, 255, 0.95);
   padding: 6px;
