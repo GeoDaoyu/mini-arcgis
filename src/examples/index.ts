@@ -8,7 +8,7 @@ interface LayerModule {
 }
 
 const modules = import.meta.glob<LayerModule>("./*.ts", { eager: true });
-const rawCodes = import.meta.glob<string>("./*.ts", { as: "raw", eager: true });
+const rawCodes = import.meta.glob<string>("./*.ts", { query: "?raw", import: "default", eager: true });
 
 interface LayerConfig {
   name: string;
