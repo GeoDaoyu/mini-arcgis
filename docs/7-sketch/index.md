@@ -91,7 +91,7 @@ sketchVM.on("create", (event) => {
 ## 基本用法
 
 ```ts
-import SketchViewModel from "@/widgets/SketchViewModel";
+import SketchViewModel from "@/widgets/Sketch/SketchViewModel";
 import GraphicsLayer from "@/layers/GraphicsLayer";
 
 // 1. 准备一个图层放标绘结果

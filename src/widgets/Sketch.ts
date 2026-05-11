@@ -1,5 +1,5 @@
-import SketchViewModel from "@/widgets/SketchViewModel";
-import type { GeometryType } from "@/widgets/SketchViewModel";
+import SketchViewModel from "@/widgets/Sketch/SketchViewModel";
+import type { GeometryType } from "@/widgets/Sketch/SketchViewModel";
 import type MapView from "@/views/MapView";
 import type GraphicsLayer from "@/layers/GraphicsLayer";
 

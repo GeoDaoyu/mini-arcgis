@@ -9,8 +9,8 @@ import Point from "./geometry/Point";
 import Polyline from "./geometry/Polyline";
 import Polygon from "./geometry/Polygon";
 import Graphic from "./Graphic";
-import Sketch from "./widgets/Sketch";
-import SketchViewModel from "./widgets/SketchViewModel";
+import Sketch from "./widgets/Sketch/Sketch";
+import SketchViewModel from "./widgets/Sketch/SketchViewModel";
 
 export {
   Map,
@@ -36,4 +36,4 @@ export type {
   UndoEvent,
   RedoEvent,
   SketchEvent,
-} from "./widgets/SketchViewModel";
+} from "./widgets/Sketch/SketchViewModel";
