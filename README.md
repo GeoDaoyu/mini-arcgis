@@ -8,7 +8,7 @@ Mini-ArcGIS是一个蝇量级的ArcGIS实现，旨在帮助学习者理解ArcGIS
 
 ## AI 协助
 
-Vibe Coding开发，本仓库由 [Qwen](https://tongyi.aliyun.com/) AI 和 DeepSeek V4 协助开发。
+Vibe Coding开发，本仓库由 **Qwen** 和 **DeepSeek** 协助开发。
 
 ## 支持的图层类型
 
@@ -22,13 +22,26 @@ Vibe Coding开发，本仓库由 [Qwen](https://tongyi.aliyun.com/) AI 和 DeepS
 ## 开发
 
 ```bash
-# install dependencies
+# 安装依赖
 $ pnpm install
 
-# develop library by docs demo
+# 启动开发服务器（基于文档示例开发库）
 $ pnpm start
 
-# build library source code
+# 构建库
 $ pnpm run build
+```
+
+### 文档
+
+```bash
+# 启动文档开发服务器
+$ pnpm run docs:dev
+
+# 构建文档
+$ pnpm run docs:build
+
+# 预览构建后的文档
+$ pnpm run docs:preview
 ```
 
