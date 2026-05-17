@@ -1,4 +1,5 @@
 import Map from "./Map";
+import Basemap from "./Basemap";
 import MapView from "./views/MapView";
 import TileLayer from "./layers/TileLayer";
 import OpenStreetMapLayer from "./layers/OpenStreetMapLayer";
@@ -22,6 +23,7 @@ import AreaMeasurement2DViewModel from "./widgets/AreaMeasurement2D/AreaMeasurem
 
 export {
   Map,
+  Basemap,
   MapView,
   TileLayer,
   OpenStreetMapLayer,

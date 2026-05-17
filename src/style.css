@@ -21,10 +21,14 @@ body, html {
 }
 
 #layer-panel h3 {
-  margin: 0 0 10px 0;
+  margin: 12px 0 10px 0;
   font-size: 14px;
   font-weight: 600;
   color: #333;
+}
+
+#layer-panel h3:first-child {
+  margin-top: 0;
 }
 
 .layer-item {

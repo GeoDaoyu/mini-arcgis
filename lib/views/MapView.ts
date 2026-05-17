@@ -1,7 +1,6 @@
 import DOMContainer, { DOMContainerProperties } from "./DOMContainer";
 import TileInfo from "@/layers/support/TileInfo";
 import Map from "@/Map";
-import type Layer from "@/layers/Layer";
 import LayerView from "./layers/LayerView";
 import { reactiveUtils } from "@geodaoyu/accessor";
 import { lngLatToXY, xyToLngLat } from "@/geometry/support/webMercatorUtils";
@@ -36,7 +35,15 @@ export default class MapView extends DOMContainer {
     reactiveUtils.watch(
       () => this.map.layers,
       () => {
-        this.createLayerView(this.map.layers);
+        this.createLayerView();
+        this.render();
+      },
+    );
+
+    reactiveUtils.watch(
+      () => this.map.basemap?.baseLayers,
+      () => {
+        this.createLayerView();
         this.render();
       },
     );
@@ -48,8 +55,8 @@ export default class MapView extends DOMContainer {
       },
     );
   }
-  private createLayerView(layers: Layer[]) {
-    this.layerViews = layers.map((layer) => layer.createLayerView(this));
+  private createLayerView() {
+    this.layerViews = this.map.allLayers.map((layer) => layer.createLayerView(this));
   }
   async render() {
     if (this._rendering) {
