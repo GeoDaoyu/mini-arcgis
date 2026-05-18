@@ -8,7 +8,7 @@ export default class MapImageLayerView extends LayerView<MapImageLayer> {
       const bbox = this.getBBox();
       const [xmin, ymin, xmax, ymax] = bbox;
       const layer = this.layer;
-      const { canvas } = this.view;
+      const canvas = this.offscreenCanvas;
       const width = canvas.width;
       const height = canvas.height;
 
@@ -23,7 +23,7 @@ export default class MapImageLayerView extends LayerView<MapImageLayer> {
 
       const imageBitmap = await createImageBitmap(blob);
 
-      const ctx = this.view.canvas.getContext("2d");
+      const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
       ctx.drawImage(imageBitmap, 0, 0, width, height);

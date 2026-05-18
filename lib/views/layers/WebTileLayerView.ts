@@ -5,8 +5,8 @@ import { lngLatToXY } from "../../geometry/support/webMercatorUtils";
 export default class WebTileLayerView<T extends WebTileLayer = WebTileLayer> extends LayerView<T> {
   async render() {
     try {
-      const { canvas, zoom } = this.view;
-      const ctx = canvas.getContext("2d");
+      const { zoom } = this.view;
+      const ctx = this.offscreenCanvas.getContext("2d");
       if (!ctx) return;
 
       const bbox = this.getBBox();
@@ -14,7 +14,7 @@ export default class WebTileLayerView<T extends WebTileLayer = WebTileLayer> ext
 
       const tileRange = this.getTileRange(xmin, ymin, xmax, ymax, zoom);
 
-      await this.drawTiles(ctx, tileRange, zoom, canvas.width, canvas.height);
+      await this.drawTiles(ctx, tileRange, zoom, this.offscreenCanvas.width, this.offscreenCanvas.height);
     } catch (error) {
       console.error("Error in WebTileLayerView render method:", error);
     }

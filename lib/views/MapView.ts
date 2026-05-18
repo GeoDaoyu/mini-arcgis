@@ -35,7 +35,7 @@ export default class MapView extends DOMContainer {
     reactiveUtils.watch(
       () => this.map.layers,
       () => {
-        this.createLayerView();
+        this.syncLayerViews();
         this.render();
       },
     );
@@ -43,7 +43,7 @@ export default class MapView extends DOMContainer {
     reactiveUtils.watch(
       () => this.map.basemap?.baseLayers,
       () => {
-        this.createLayerView();
+        this.syncLayerViews();
         this.render();
       },
     );
@@ -51,13 +51,35 @@ export default class MapView extends DOMContainer {
     reactiveUtils.watch(
       () => [this.zoom, this.center],
       () => {
+        for (const lv of this.layerViews) {
+          lv.dirty = true;
+        }
         this.render();
       },
     );
   }
-  private createLayerView() {
-    this.layerViews = this.map.allLayers.map((layer) => layer.createLayerView(this));
+
+  private syncLayerViews() {
+    const allLayers = this.map.allLayers;
+
+    // 移除已经不存在的图层视图
+    this.layerViews = this.layerViews.filter((lv) =>
+      allLayers.some((l) => l.id === lv.layer.id),
+    );
+
+    // 按 z-order 重建，复用已有视图
+    const ordered: LayerView[] = [];
+    for (const layer of allLayers) {
+      const existing = this.layerViews.find((lv) => lv.layer.id === layer.id);
+      if (existing) {
+        ordered.push(existing);
+      } else {
+        ordered.push(layer.createLayerView(this));
+      }
+    }
+    this.layerViews = ordered;
   }
+
   async render() {
     if (this._rendering) {
       this._pendingRender = true;
@@ -66,13 +88,23 @@ export default class MapView extends DOMContainer {
     this._rendering = true;
 
     try {
+      // Phase 1: 渲染脏图层到各自的离屏 canvas
+      for (const layerView of this.layerViews) {
+        if (layerView.dirty) {
+          layerView.offscreenCanvas.width = this.canvas.width;
+          layerView.offscreenCanvas.height = this.canvas.height;
+          await layerView.render();
+          layerView.dirty = false;
+        }
+      }
+
+      // Phase 2: 原子合成到主 canvas
       const ctx = this.canvas.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      }
-
-      for (const layerView of this.layerViews) {
-        await layerView.render();
+        for (const layerView of this.layerViews) {
+          ctx.drawImage(layerView.offscreenCanvas, 0, 0);
+        }
       }
     } finally {
       this._rendering = false;

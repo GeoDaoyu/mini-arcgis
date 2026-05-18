@@ -18,8 +18,7 @@ export default class FeatureLayerView extends LayerView<FeatureLayer> {
   }
 
   async render() {
-    const { canvas } = this.view;
-    const ctx = canvas.getContext("2d");
+    const ctx = this.offscreenCanvas.getContext("2d");
     if (!ctx) return;
 
     const renderers = new Map<string, (graphic: any, symbol: any) => void>([

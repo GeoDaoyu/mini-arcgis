@@ -20,8 +20,7 @@ export default class GraphicsLayerView extends LayerView<GraphicsLayer> {
   }
 
   async render() {
-    const { canvas } = this.view;
-    const ctx = canvas.getContext("2d");
+    const ctx = this.offscreenCanvas.getContext("2d");
     if (!ctx) return;
 
     const defaultSymbols = new Map<string, () => any>([

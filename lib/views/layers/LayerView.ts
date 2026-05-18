@@ -9,9 +9,14 @@ export interface LayerViewProperties<T extends Layer = Layer> {
 export default class LayerView<T extends Layer = Layer> {
   layer: T;
   view: MapView;
+  offscreenCanvas: HTMLCanvasElement;
+  dirty: boolean = true;
+
   constructor(properties: LayerViewProperties<T>) {
     this.layer = properties.layer;
     this.view = properties.view;
+    this.offscreenCanvas = document.createElement("canvas");
   }
+
   async render() {}
 }
