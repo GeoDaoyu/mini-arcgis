@@ -69,10 +69,14 @@ sketchViewModel.on("create", (event) => {
 // 外部视角：只需监听，不用关心内部如何实现
 sketchVM.on("create", (event) => {
   switch (event.state) {
-    case "start":    /* 开始画了 */ break;
-    case "active":   /* 正在画，event.vertices 持续更新 */ break;
-    case "complete": /* 画完了，event.graphic 可用 */ break;
-    case "cancel":   /* 取消了 */ break;
+    case "start":
+      /* 开始画了 */ break;
+    case "active":
+      /* 正在画，event.vertices 持续更新 */ break;
+    case "complete":
+      /* 画完了，event.graphic 可用 */ break;
+    case "cancel":
+      /* 取消了 */ break;
   }
 });
 ```
@@ -81,12 +85,12 @@ sketchVM.on("create", (event) => {
 
 ## 支持的几何类型
 
-| 类型 | 操作 | 完成方式 |
-|------|------|----------|
-| `point` | 单击放置 | 单击即完成 |
-| `multipoint` | 多次点击添加点 | 双击 / C 键 |
-| `polyline` | 点击添加顶点 | 双击 / C 键 |
-| `polygon` | 点击添加顶点 | 双击 / C 键（自动闭合） |
+| 类型         | 操作           | 完成方式                |
+| ------------ | -------------- | ----------------------- |
+| `point`      | 单击放置       | 单击即完成              |
+| `multipoint` | 多次点击添加点 | 双击 / C 键             |
+| `polyline`   | 点击添加顶点   | 双击 / C 键             |
+| `polygon`    | 点击添加顶点   | 双击 / C 键（自动闭合） |
 
 ## 基本用法
 
@@ -123,16 +127,6 @@ const sketch = new Sketch({ view: mapView, layer: sketchLayer });
 sketch.create("polyline");
 ```
 
-## 键盘快捷键
-
-| 键 | 功能 |
-|---|---|
-| `C` | 完成当前标绘 |
-| `Escape` | 取消当前标绘 |
-| `Backspace` | 撤销上一个顶点 |
-| `Ctrl + Z` | 撤销 |
-| `Ctrl + Y` / `Ctrl + Shift + Z` | 重做 |
-
 ## 临时预览如何工作
 
 标绘过程中，用户需要看到"正在画的图形"。mini-arcgis 的做法是不动主 Canvas——在它上面叠加一个透明 `<canvas>`（`pointer-events: none`，z-index 更高），所有预览绘制都在这层上：
@@ -166,9 +160,9 @@ sketchVM.cancel();
 标绘图层应该放在**最上层**，确保图形不被底图盖住：
 
 ```ts
-map.add(osmLayer);      // 底图在最下
-map.add(dataLayer);     // 业务数据在中间
-map.add(sketchLayer);   // 标绘在最上
+map.add(osmLayer); // 底图在最下
+map.add(dataLayer); // 业务数据在中间
+map.add(sketchLayer); // 标绘在最上
 ```
 
 ## 一句话总结

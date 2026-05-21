@@ -1,4 +1,4 @@
-# 2. MVVM 架构设计
+# 2. Model-View 架构设计
 
 这一章没什么高深的东西，就是一句话：**数据和渲染分开**。
 
@@ -7,11 +7,10 @@
 想象一下，如果绘制代码和数据管理都写在一个类里——改个渲染效果要动数据逻辑，换个数据源要动绘制代码。几百行之后你自己都不想看了。
 
 分开之后：
+
 - **Map** 负责数据（图层列表、增删改查）
 - **MapView** 负责渲染（Canvas 绘制、坐标转换、事件处理）
 - 谁都不越界，各管各的
-
-这就是 MVVM 在这个项目里的全部含义——**M 是 Map，V 是 MapView**。没有 ViewModel，不需要那么复杂。
 
 ## Map：数据层
 
@@ -21,10 +20,10 @@ Map 就是一个图层管理器。它的全部职责：
 class Map {
   layers: Layer[];
 
-  add(layer: Layer): void;       // 加图层
-  remove(layer: Layer): Layer;   // 删图层
-  findLayerById(id: string): Layer | undefined;  // 找图层
-  removeAll(): void;             // 清空
+  add(layer: Layer): void; // 加图层
+  remove(layer: Layer): Layer; // 删图层
+  findLayerById(id: string): Layer | undefined; // 找图层
+  removeAll(): void; // 清空
 }
 ```
 
@@ -36,12 +35,12 @@ MapView 持有一个 Map，负责把它画出来：
 
 ```ts
 class MapView {
-  map: Map;                      // 持有的数据模型
-  canvas: HTMLCanvasElement;     // 画布
+  map: Map; // 持有的数据模型
+  canvas: HTMLCanvasElement; // 画布
 
-  toScreen(lng, lat): {x, y};   // 经纬度 → 屏幕像素
-  toMap(x, y): {lng, lat};      // 屏幕像素 → 经纬度
-  render(): void;               // 遍历所有图层，逐个渲染
+  toScreen(lng, lat): { x; y }; // 经纬度 → 屏幕像素
+  toMap(x, y): { lng; lat }; // 屏幕像素 → 经纬度
+  render(): void; // 遍历所有图层，逐个渲染
 }
 ```
 
@@ -55,7 +54,7 @@ MapView 本身不会画瓦片、画点、画线——它把这些活分派给各
 class MapView {
   render() {
     for (const layer of this.map.layers) {
-      layer.layerView.render(this.context);  // 每个图层自己画自己
+      layer.layerView.render(this.context); // 每个图层自己画自己
     }
   }
 }
@@ -83,7 +82,7 @@ import { reactiveUtils } from "@geodaoyu/accessor";
 // center、zoom 等属性变化时，自动调用 render()
 reactiveUtils.watch(
   () => [this.center, this.zoom, this.rotation],
-  () => this.render()
+  () => this.render(),
 );
 ```
 

@@ -37,13 +37,17 @@ import { arcgisToGeoJSON } from "@terraformer/arcgis";
 import { length, area } from "@turf/turf";
 
 // 线段：paths → LineString → 距离
-const vertices = [[120, 30], [121, 30], [121, 31]];
+const vertices = [
+  [120, 30],
+  [121, 30],
+  [121, 31],
+];
 const line = arcgisToGeoJSON({ paths: [vertices] });
-const d = length(line, { units: "meters" });  // 线段长度（米）
+const d = length(line, { units: "meters" }); // 线段长度（米）
 
 // 面：rings → Polygon → 面积
 const polygon = arcgisToGeoJSON({ rings: [vertices] });
-const a = area(polygon);  // 面积（平方米）
+const a = area(polygon); // 面积（平方米）
 ```
 
 `arcgisToGeoJSON()` 做了两件事：把 `paths` 映射为 GeoJSON 的 `LineString` 坐标数组，把 `rings` 映射为 `Polygon` 坐标数组。坐标值本身不变——两种格式的坐标都是 `[lng, lat]`，只是结构的键名不同。
@@ -74,12 +78,12 @@ AreaMeasurement2D（UI 层）
 
 ## 测量格式化规则
 
-| 测量类型 | 阈值 | 显示格式 | 示例 |
-|---------|------|---------|------|
-| 距离 | < 1000 m | `X m` | `456 m` |
-| 距离 | >= 1000 m | `X.XX km` | `1.23 km` |
-| 面积 | < 1,000,000 m² | `X sq m` | `50000 sq m` |
-| 面积 | >= 1,000,000 m² | `X.XX sq km` | `2.50 sq km` |
+| 测量类型 | 阈值            | 显示格式     | 示例         |
+| -------- | --------------- | ------------ | ------------ |
+| 距离     | < 1000 m        | `X m`        | `456 m`      |
+| 距离     | >= 1000 m       | `X.XX km`    | `1.23 km`    |
+| 面积     | < 1,000,000 m²  | `X sq m`     | `50000 sq m` |
+| 面积     | >= 1,000,000 m² | `X.XX sq km` | `2.50 sq km` |
 
 ## 基本用法
 
@@ -115,7 +119,10 @@ distanceVM.start();
 ### 方式二：用 Widget 门面
 
 ```ts
-const measure = new DistanceMeasurement2D({ view: mapView, layer: measureLayer });
+const measure = new DistanceMeasurement2D({
+  view: mapView,
+  layer: measureLayer,
+});
 measure.start();
 ```
 
@@ -124,18 +131,6 @@ measure.start();
 ## 面测量的特殊处理
 
 `turf.area()` 要求面（Polygon）的环是**闭合的**（首尾顶点坐标相同）。在绘制过程中，顶点数组不包含闭合点，所以测量前需要自动补上第一个顶点作为闭合点。代码逻辑也会检查是否已经闭合，避免重复追加。
-
-## 键盘快捷键
-
-和标绘完全一致：
-
-| 键 | 功能 |
-|---|---|
-| `C` | 完成当前测量 |
-| `Escape` | 取消当前测量 |
-| `Backspace` | 撤销上一个顶点 |
-| `Ctrl + Z` | 撤销 |
-| `Ctrl + Y` / `Ctrl + Shift + Z` | 重做 |
 
 ## 一句话总结
 
