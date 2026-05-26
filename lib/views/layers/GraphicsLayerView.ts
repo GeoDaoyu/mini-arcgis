@@ -14,6 +14,7 @@ export default class GraphicsLayerView extends LayerView<GraphicsLayer> {
     reactiveUtils.watch(
       () => this.layer.graphics,
       () => {
+        this.dirty = true;
         this.view.render();
       },
     );
