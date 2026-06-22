@@ -20,6 +20,7 @@ import DistanceMeasurement2D from "./widgets/DistanceMeasurement2D/DistanceMeasu
 import DistanceMeasurement2DViewModel from "./widgets/DistanceMeasurement2D/DistanceMeasurement2DViewModel";
 import AreaMeasurement2D from "./widgets/AreaMeasurement2D/AreaMeasurement2D";
 import AreaMeasurement2DViewModel from "./widgets/AreaMeasurement2D/AreaMeasurement2DViewModel";
+import * as bufferOperator from "./geometry/operators/bufferOperator";
 
 export {
   Map,
@@ -44,6 +45,7 @@ export {
   DistanceMeasurement2DViewModel,
   AreaMeasurement2D,
   AreaMeasurement2DViewModel,
+  bufferOperator,
 };
 
 export type {

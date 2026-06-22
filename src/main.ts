@@ -4,6 +4,7 @@ import Basemap from "@/Basemap";
 import GraphicsLayer from "@/layers/GraphicsLayer";
 import initSketch from "./widgets/Sketch";
 import initMeasurement from "./widgets/Measurement";
+import initBuffer from "./operators/Buffer";
 import { layerExamples, layerIdToName, layerConfig } from "./examples";
 
 const map = new Map();
@@ -34,8 +35,21 @@ const measurementLayer = new GraphicsLayer({
 });
 view.map.add(measurementLayer); // measurement on top
 
+// buffer layers
+const bufferInputLayer = new GraphicsLayer({
+  id: "buffer-input-layer",
+  title: "Buffer Input",
+});
+const bufferResultLayer = new GraphicsLayer({
+  id: "buffer-result-layer",
+  title: "Buffer Result",
+});
+view.map.add(bufferInputLayer);
+view.map.add(bufferResultLayer);
+
 initSketch(view, sketchLayer);
 initMeasurement(view, measurementLayer);
+initBuffer(view, bufferInputLayer, bufferResultLayer);
 
 // ---- Layer Panel ----
 

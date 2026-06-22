@@ -60,6 +60,42 @@
         <span class="sketch-icon sketch-icon-reset"></span>
       </button>
     </div>
+    <div id="buffer-toolbar">
+      <span class="toolbar-label">Buffer</span>
+      <button class="buffer-btn" id="buffer-point-btn" title="Draw point">
+        <span class="sketch-icon sketch-icon-point"></span>
+      </button>
+      <button class="buffer-btn" id="buffer-polyline-btn" title="Draw polyline">
+        <span class="sketch-icon sketch-icon-polyline"></span>
+      </button>
+      <button class="buffer-btn" id="buffer-polygon-btn" title="Draw polygon">
+        <span class="sketch-icon sketch-icon-polygon"></span>
+      </button>
+      <div class="buffer-divider"></div>
+      <input
+        type="number"
+        id="buffer-distance"
+        class="buffer-distance-input"
+        value="1"
+        min="0"
+        step="0.1"
+        title="Buffer distance"
+      />
+      <select id="buffer-unit" class="buffer-unit-select" title="Distance unit">
+        <option value="kilometers" selected>km</option>
+        <option value="meters">m</option>
+        <option value="miles">mi</option>
+        <option value="feet">ft</option>
+      </select>
+      <button class="buffer-btn" id="buffer-run-btn" title="Run buffer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+      </button>
+      <button class="buffer-btn buffer-clear-btn" id="buffer-clear-btn" title="Clear all buffers">
+        <span class="sketch-icon sketch-icon-reset"></span>
+      </button>
+    </div>
     <div id="layer-panel">
       <h3>Basemap</h3>
       <div class="layer-item">

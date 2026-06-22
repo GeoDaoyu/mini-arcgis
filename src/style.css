@@ -339,3 +339,106 @@ body, html {
   background: #d3d3d3;
   margin: 0 2px;
 }
+
+/* ---- Buffer Toolbar ---- */
+
+#buffer-toolbar {
+  position: absolute;
+  top: 162px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.buffer-btn {
+  font-size: 16px;
+  background-color: transparent;
+  border: 1px solid #d3d3d3;
+  color: #6e6e6e;
+  height: 32px;
+  width: 32px;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.buffer-btn:hover {
+  background: #e8e8e8;
+  border-color: #aaa;
+  color: #333;
+}
+
+.buffer-btn.active {
+  background: #ff8c00;
+  color: #fff;
+  border-color: #ff8c00;
+}
+
+.buffer-btn.active .sketch-icon-polygon {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.buffer-clear-btn {
+  color: #c33;
+  border-color: #e0c0c0;
+}
+
+.buffer-clear-btn:hover {
+  background: #fce8e8;
+  border-color: #c33;
+  color: #c33;
+}
+
+.buffer-divider {
+  width: 1px;
+  height: 20px;
+  background: #d3d3d3;
+  margin: 0 2px;
+}
+
+.buffer-distance-input {
+  width: 56px;
+  height: 32px;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+  color: #333;
+  background: #fff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.buffer-distance-input:focus {
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+}
+
+.buffer-unit-select {
+  height: 32px;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #333;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+}
+
+.buffer-unit-select:focus {
+  border-color: #ff8c00;
+}
