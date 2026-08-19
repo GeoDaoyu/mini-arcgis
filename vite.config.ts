@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
 
-export default defineConfig({
-  base: "/mini-arcgis",
+export default defineConfig(({ command }) => ({
+  base: command === "build" ? "./" : "/mini-arcgis",
   resolve: {
     alias: {
       "@": resolve(__dirname, "lib"),
@@ -15,4 +15,4 @@ export default defineConfig({
       fileName: "mini-arcgis",
     },
   },
-});
+}));

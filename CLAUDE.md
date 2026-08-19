@@ -23,6 +23,7 @@ This is a lightweight GIS engine inspired by ArcGIS API for JavaScript.
 - **LayerView Pattern**: Each layer type creates a corresponding `LayerView` that handles rendering logic.
 - **Geometry & Symbols**: Geometry types (`Point`, `Polyline`, `Polygon`) in `lib/geometry/`; symbols (`SimpleMarkerSymbol`, `SimpleLineSymbol`, etc.) in `lib/symbols/`.
 - **Spatial Reference**: Web Mercator projection utilities in `lib/geometry/support/webMercatorUtils.ts`.
+- **Web Workers**: Heavy data parsing (fetch + GeoJSON→ArcGIS conversion + projection) is offloaded to a shared worker in `lib/workers/` (`parseDataHandler.ts` holds pure, thread-agnostic logic; `parseDataClient.ts` is the main-thread facade with a no-worker fallback). Workers transfer plain `GraphicDescriptor` data, never class instances; the main thread rehydrates them via `graphicFromDescriptor` (`lib/workers/descriptors.ts`). Worker URLs use the Vite idiom `new Worker(new URL("./x.worker.ts", import.meta.url))`; the library build uses a relative `base` so the emitted worker chunk resolves relative to the library file.
 
 ### Key Data Flow
 

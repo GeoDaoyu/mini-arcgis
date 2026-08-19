@@ -1,12 +1,10 @@
 import Layer, { LayerProperties, LayerType } from "./Layer";
-import Graphic from "@/Graphic";
+import type Graphic from "@/Graphic";
 import { Renderer } from "@/renderers/Renderer";
 import MapView from "@/views/MapView";
 import GeoJSONLayerView from "@/views/layers/GeoJSONLayerView";
-import { geojsonToArcGIS } from "@terraformer/arcgis";
-import Point from "@/geometry/Point";
-import Polyline from "@/geometry/Polyline";
-import Polygon from "@/geometry/Polygon";
+import { graphicFromDescriptor } from "@/workers/descriptors";
+import { requestParseData } from "@/workers/parseDataClient";
 
 export interface GeoJSONLayerProperties extends LayerProperties {
   url: string;
@@ -29,46 +27,14 @@ export default class GeoJSONLayer extends Layer {
 
   private async loadFromUrl(url: string) {
     try {
-      const response = await fetch(url);
-      const geojson = await response.json();
-      this.parseGeoJSON(geojson);
+      // Fetching + GeoJSON → ArcGIS conversion + parsing run in a Web
+      // Worker, so large datasets don't block the main thread. The worker
+      // returns plain descriptors which are rehydrated into Graphics here.
+      const descriptors = await requestParseData("load-geojson", { url });
+      this.source = descriptors.map(graphicFromDescriptor);
     } catch (error) {
       console.error("Failed to load GeoJSON:", error);
     }
-  }
-
-  private parseGeoJSON(geojson: any) {
-    const features =
-      geojson.type === "FeatureCollection" ? geojson.features : [geojson];
-
-    this.source = features.map((feature: any) => {
-      const arcgisGeometry = geojsonToArcGIS(feature.geometry);
-      const geometry = this.createGeometry(arcgisGeometry);
-      return new Graphic({
-        geometry,
-        attributes: feature.properties || {},
-        symbol: undefined,
-      });
-    });
-  }
-
-  private createGeometry(arcgisGeometry: any) {
-    if (arcgisGeometry.x !== undefined && arcgisGeometry.y !== undefined) {
-      return new Point({
-        longitude: arcgisGeometry.x,
-        latitude: arcgisGeometry.y,
-      });
-    }
-
-    if (arcgisGeometry.paths) {
-      return new Polyline({ paths: arcgisGeometry.paths });
-    }
-
-    if (arcgisGeometry.rings) {
-      return new Polygon({ rings: arcgisGeometry.rings });
-    }
-
-    throw new Error("Unsupported geometry type");
   }
 
   createLayerView(view: MapView): GeoJSONLayerView {
