@@ -5,6 +5,10 @@ export default defineConfig({
   description: "WebGIS 开发学习指南",
   lang: "zh-CN",
 
+  // GitHub Pages 部署在 /mini-arcgis/docs/ 子路径下，CI 中通过
+  // VITEPRESS_BASE 环境变量注入；本地开发默认 "/"。
+  base: process.env.VITEPRESS_BASE ?? "/",
+
   themeConfig: {
     nav: [
       { text: "首页", link: "/" },

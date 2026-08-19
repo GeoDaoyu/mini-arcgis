@@ -59,3 +59,11 @@ This is a lightweight GIS engine inspired by ArcGIS API for JavaScript.
 - No test suite is currently configured.
 - The demo (`src/`) showcases all layer types and is built with `pnpm run demo`.
 - Documentation is built with VitePress in `docs/`.
+
+## Deployment (GitHub Pages)
+
+- Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the demo (`pnpm run demo`, output `demo/`) and the docs (`pnpm run docs:build`), then uploads both as one Pages artifact.
+- URL layout on the repo's Pages site:
+  - Demo: `https://geodaoyu.github.io/mini-arcgis/`
+  - Docs: `https://geodaoyu.github.io/mini-arcgis/docs/`
+- Docs must be built with `VITEPRESS_BASE=/mini-arcgis/docs/` in CI (see `docs/.vitepress/config.ts`); locally `base` defaults to `/`, so `pnpm docs:dev` behaves as usual. Do not change the docs URL without updating the workflow's `VITEPRESS_BASE`.
