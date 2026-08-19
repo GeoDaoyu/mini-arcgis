@@ -28,7 +28,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/geodaoyu/mini-viewer" },
+      { icon: "github", link: "https://github.com/geodaoyu/mini-arcgis" },
     ],
 
     footer: {
@@ -37,7 +37,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: "https://github.com/geodaoyu/mini-viewer/edit/main/docs/:path",
+      pattern: "https://github.com/geodaoyu/mini-arcgis/edit/main/docs/:path",
       text: "在 GitHub 上编辑此页面",
     },
 
