@@ -24,7 +24,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # 与本机开发环境保持一致（Node 24）；pnpm 11 需要 Node >= 22.13
+          node-version: "24"
           cache: pnpm
 
       - name: Install dependencies
