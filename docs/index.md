@@ -13,6 +13,9 @@ hero:
       text: 开始学习
       link: /1-getting-started/
     - theme: alt
+      text: 在线 Demo
+      link: https://geodaoyu.github.io/mini-arcgis/
+    - theme: alt
       text: 在 GitHub 上查看
       link: https://github.com/geodaoyu/mini-arcgis
 

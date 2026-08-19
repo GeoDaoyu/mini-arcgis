@@ -6,6 +6,11 @@ Mini-ArcGIS是一个蝇量级的ArcGIS实现，旨在帮助学习者理解ArcGIS
 
 > ⚠️该仓库仅是为了学习WebGIS开发，切勿在生产中使用。
 
+## 在线体验
+
+- **在线 Demo**：https://geodaoyu.github.io/mini-arcgis/
+- **在线文档**：https://geodaoyu.github.io/mini-arcgis/docs/
+
 ## AI 协助
 
 Vibe Coding开发，本仓库由 **Qwen** 和 **DeepSeek** 协助开发。

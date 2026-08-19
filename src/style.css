@@ -442,3 +442,25 @@ body, html {
 .buffer-unit-select:focus {
   border-color: #ff8c00;
 }
+
+/* ---- Docs Link ---- */
+#docs-link {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 2000;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #0079c1;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s, color 0.2s;
+}
+
+#docs-link:hover {
+  background: #0079c1;
+  color: #fff;
+}
